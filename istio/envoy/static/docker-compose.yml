@@ -1,0 +1,12 @@
+version: '3'
+services: 
+  envoy: 
+    image: envoyproxy/envoy-alpine
+    ports:
+      - "10000:10000"
+    volumes:
+      - "./envoy.yaml:/etc/envoy/envoy.yaml:rw"
+  nginx:
+    image: nginx
+    ports:
+      - "80:80"

@@ -1,0 +1,12 @@
+version: '3'
+services:
+  server:
+    container_name: envoy-server-demo
+    build: 
+      context: ../../
+      dockerfile: deploy/Dockerfile
+      args:
+        JAR_FILE: build/libs/*.jar
+    image: envoy-server-demo
+    ports:
+      - "8080:8080"

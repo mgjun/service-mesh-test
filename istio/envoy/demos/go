@@ -1,0 +1,14 @@
+#! /bin/bash
+
+echo "deploy"
+
+case $1 in
+    "web")
+        echo "start envoy web"
+        cd envoy-web/deploy/local && docker-compose up -d
+    ;;
+    "server")
+        echo "start envoy server"
+        cd envoy-server/deploy/local && docker-compose up -d
+    ;;
+esac
