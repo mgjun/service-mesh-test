@@ -4,12 +4,30 @@ PWD=`pwd`
 echo ${PWD}
 
 case $1 in
-    "python")
-        echo "start envoy web"
-        cd envoy-web/deploy/local && docker-compose down && docker-compose up -d
+    "py")
+        echo "envoy python"
+        case $2 in
+            "down")
+                echo "down..."
+                cd envoy-python && docker-compose down
+            ;;
+            "up")
+                echo "up..."
+                cd envoy-python && docker-compose up -d
+            ;;
+        esac
     ;;
     "java")
-        echo "start envoy server"
-        cd envoy-server/deploy/local && docker-compose down && docker-compose up -d
+        echo "envoy java"
+        case $2 in
+            "down")
+                echo "down..."
+                cd envoy-java/deploy && docker-compose down
+            ;;
+            "up")
+                echo "up..."
+                cd envoy-java/deploy && docker-compose up -d
+            ;;
+        esac
     ;;
 esac

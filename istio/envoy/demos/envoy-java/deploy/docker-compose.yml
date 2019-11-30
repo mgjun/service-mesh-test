@@ -2,7 +2,7 @@ version: '3'
 services:
   front-envoy:
     build:
-      context: ../
+      context: .
       dockerfile: Dockerfile-front
     volumes:
       - ../envoy-front.yaml:/etc/front-envoy.yaml
@@ -18,8 +18,8 @@ services:
   server1:
     container_name: envoy-server-demo1
     build: 
-      context: ../
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: Dockerfile-server
       args:
         JAR_FILE: build/libs/*.jar
     image: envoy-server-demo
@@ -36,8 +36,8 @@ services:
   server2:
     container_name: envoy-server-demo2
     build:
-      context: ../
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: Dockerfile-server
       args:
         JAR_FILE: build/libs/*.jar
     image: envoy-server-demo
