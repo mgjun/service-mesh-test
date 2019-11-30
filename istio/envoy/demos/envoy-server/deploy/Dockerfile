@@ -1,5 +1,9 @@
 FROM openjdk:8-jdk-alpine
-VOLUME /tmp
+FROM envoyproxy/envoy-alpine:latest
+
 ARG JAR_FILE=build/libs/*.jar
-COPY ${JAR_FILE} app.jar
-ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
+ADD ${JAR_FILE} app.jar
+
+ADD ./start_service.sh /usr/local/bin/start_service.sh
+RUN chmod u+x /usr/local/bin/start_service.sh
+ENTRYPOINT /usr/local/bin/start_service.sh

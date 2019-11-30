@@ -1,14 +1,33 @@
 #! /bin/bash
 
-echo "deploy"
+PWD=`pwd`
+echo ${PWD}
 
 case $1 in
     "web")
         echo "start envoy web"
-        cd envoy-web/deploy/local && docker-compose up -d
+        cd envoy-web/deploy/local && docker-compose down && docker-compose up -d
     ;;
     "server")
         echo "start envoy server"
-        cd envoy-server/deploy/local && docker-compose up -d
+        cd envoy-server/deploy/local && docker-compose down && docker-compose up -d
+    ;;
+    "server1")
+        echo "start envoy server1"
+        cd envoy-server/deploy &&
+            docker run -d -v `pwd`/envoy.yaml:/etc/envoy/envoy.yaml --name envoyproxy-server1 envoyproxy/envoy-alpine /usr/local/bin/envoy --service-cluster envoy-server --service-node 1 -c /etc/envoy/envoy.yaml --v2-config-only && 
+            docker run -d --network=container:envoyproxy-server1 --name envoy-server1 envoy-server-demo
+    ;;
+    "server2")
+        echo "start envoy server2"
+        cd envoy-server/deploy && 
+            docker run -d -v `pwd`/envoy.yaml:/etc/envoy/envoy.yaml --name envoyproxy-server2 envoyproxy/envoy-alpine /usr/local/bin/envoy --service-cluster envoy-server --service-node 2 -c /etc/envoy/envoy.yaml --v2-config-only && 
+            docker run -d --network=container:envoyproxy-server2 --name envoy-server2 envoy-server-demo
+    ;;
+    "webproxy")
+        echo "start envoy web"
+        cd envoy-web/deploy && 
+            docker run -d -p 10000:10000 -v `pwd`/envoy.yaml:/etc/envoy/envoy.yaml --name envoyproxy-web envoyproxy/envoy-alpine /usr/local/bin/envoy --service-cluster envoy-web --service-node 1 -c /etc/envoy/envoy.yaml --v2-config-only && 
+            docker run -d --network=container:envoyproxy-web --name envoy-web envoy-web-demo
     ;;
 esac

@@ -1,12 +1,56 @@
 version: '3'
 services:
-  server:
-    container_name: envoy-server-demo
+  front-envoy:
+    build:
+      context: ../
+      dockerfile: Dockerfile-front
+    volumes:
+      - ../envoy-front.yaml:/etc/front-envoy.yaml
+    networks:
+      - envoymesh
+    expose:
+      - "80"
+      - "8001"
+    ports:
+      - "8000:80"
+      - "8001:8001"
+    
+  server1:
+    container_name: envoy-server-demo1
     build: 
-      context: ../../
-      dockerfile: deploy/Dockerfile
+      context: ../
+      dockerfile: Dockerfile
       args:
         JAR_FILE: build/libs/*.jar
     image: envoy-server-demo
-    ports:
-      - "8080:8080"
+    volumes:
+      - ../envoy-server.yaml:/etc/service-envoy.yaml
+    expose:
+      - "80"
+    networks:
+      envoymesh:
+        aliases:
+          - service1
+    environment:
+      - SERVICE_NAME=1
+  server2:
+    container_name: envoy-server-demo2
+    build:
+      context: ../
+      dockerfile: Dockerfile
+      args:
+        JAR_FILE: build/libs/*.jar
+    image: envoy-server-demo
+    volumes:
+      - ../envoy-server.yaml:/etc/service-envoy.yaml
+    expose:
+      - "80"
+    networks:
+      envoymesh:
+        aliases:
+          - service2
+    environment:
+      - SERVICE_NAME=2
+    
+networks:
+  envoymesh: {}
