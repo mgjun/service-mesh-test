@@ -1,9 +1,24 @@
-FROM openjdk:8-jdk-alpine
+FROM openjdk:8-jdk as java
+
+RUN echo "java home: ${JAVA_HOME}"
+
 FROM envoyproxy/envoy-dev:latest
 
+RUN apt-get update && apt-get -q install -y \
+    curl
+
+COPY --from=java /usr/local/openjdk-8 /usr/local/openjdk-8
+ENV JAVA_HOME /usr/local/openjdk-8
+ENV PATH ${PATH}:${JAVA_HOME}/bin
+
+RUN echo "envoy java home: ${JAVA_HOME}"
+RUN echo "envoy java path: ${PATH}"
+RUN echo "$(java -version)"
+
 ARG JAR_FILE=build/libs/*.jar
+RUN echo "jar file: ${JAR_FILE}"
 ADD ${JAR_FILE} app.jar
 
-ADD ./start_service.sh /usr/local/bin/start_service.sh
+ADD ./deploy/start_service.sh /usr/local/bin/start_service.sh
 RUN chmod u+x /usr/local/bin/start_service.sh
 ENTRYPOINT /usr/local/bin/start_service.sh

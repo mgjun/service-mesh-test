@@ -13,7 +13,7 @@ case $1 in
             ;;
             "up")
                 echo "up..."
-                cd envoy-python && docker-compose up -d
+                cd envoy-python && docker-compose up --build -d
             ;;
         esac
     ;;
@@ -26,7 +26,11 @@ case $1 in
             ;;
             "up")
                 echo "up..."
-                cd envoy-java/deploy && docker-compose up -d
+                cd envoy-java/deploy && docker-compose up --build -d
+            ;;
+            "scale")
+                echo "scale..."
+                cd envoy-java/deploy && docker-compose scale $3=$4
             ;;
         esac
     ;;
